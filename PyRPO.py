@@ -7,7 +7,7 @@ from matplotlib.patches import Ellipse
 from scipy.optimize import minimize
 import plotly.express as px
 
-class RobustPortfolioOptimizer:
+class PyRPO:
     def __init__(self, csv_file):
         self.data = pd.read_csv(csv_file, index_col=0, parse_dates=True)
         self.asset_names = self.data.columns
