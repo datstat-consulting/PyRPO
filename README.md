@@ -34,7 +34,7 @@ closing_prices.to_csv('PortfolioData.csv')
 ```
 Create an instance of the class with a sample CSV file containing historical price data.
 ```
-instanceRPO = RobustPortfolioOptimizer('PortfolioData.csv')
+instanceRPO = PyRPO('PortfolioData.csv')
 ```
 Set the risk aversion parameter (gamma) and solve the RPO problem. When no uncertainty radius is set, PyRPO uses half the average Sharpe Ratios as the Uncertainty Radius as suggested by Yin, Perchet, and Soupé (2021).
 ```
