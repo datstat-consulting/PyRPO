@@ -77,4 +77,5 @@ optimizer.generate_capital_allocation_chart()
 print(instanceRPO.capital_allocation)
 ```
 # References
+* Feng, Y., & Palomar, D. P. (2016). A signal processing perspective on financial engineering. Foundations and Trends® in Signal Processing, 9(1–2), 1-231.
 * Yin, C., Perchet, R., & Soupé, F. (2021). A practical guide to robust portfolio optimization. Quantitative Finance, 21(6), 911-928.
