@@ -72,8 +72,8 @@ pio.show(backtesting_figure)
 ```
 Allocate capital.
 ```
-optimizer.allocate_capital(54368)
-optimizer.generate_capital_allocation_chart()
+instanceRPO.allocate_capital(54368)
+instanceRPO.generate_capital_allocation_chart()
 print(instanceRPO.capital_allocation)
 ```
 # References
