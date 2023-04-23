@@ -2,7 +2,7 @@
 
 Markowitz Mean-Variance Optimization is highly sensitive to small estimation errors in parameters. This problem makes the method unsuable in practice. To counteract these problems, portfolio optimization can factor in uncertainty when estimating parameters.
 
-`PyRPO` is a Python package that implements Robust Portfolio Optimization. This library was built as a hobby project. `PyRPO` relies heavily on numpy and scipy to handle matrix algebra and optimization. 
+`PyRPO` is a Python package that implements Robust Portfolio Optimization. This library was built as a hobby project. `PyRPO` relies heavily on `numpy` and `scipy` to handle matrix algebra and optimization. 
 
 # Example
 
