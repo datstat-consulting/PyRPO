@@ -5,6 +5,7 @@ Markowitz Mean-Variance Optimization is highly sensitive to small estimation err
 `PyRPO` is a Python package that implements Robust Portfolio Optimization. This library was built as a hobby project. `PyRPO` relies heavily on `numpy` and `scipy` to handle matrix algebra and optimization. 
 
 # Example
+We demonstrate the library using cryptocurrency as an example. This shows how versatile the library is with any kind of Financial asset data.
 
 Obtain cryptocurrency closing prices.
 ```
@@ -32,8 +33,9 @@ for symbol in symbols:
   
 closing_prices.to_csv('PortfolioData.csv')
 ```
-Create an instance of the class with a sample CSV file containing historical price data.
+Import the class, and create an instance of the class with a sample CSV file containing historical price data.
 ```
+from PyRPO import *
 instanceRPO = PyRPO('PortfolioData.csv')
 ```
 Set the risk aversion parameter (gamma) and solve the RPO problem. When no uncertainty radius is set, PyRPO uses half the average Sharpe Ratios as the Uncertainty Radius as suggested by Yin, Perchet, and Soupé (2021).
