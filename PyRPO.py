@@ -67,7 +67,7 @@ class PyRPO:
         return result.x
 
     # uncertainty_bounds_factor_range = np.linspace(x, y, z)
-    def sensitivity_analysis(self, uncertainty_radius_range):
+    def sensitivity_analysis(self, uncertainty_radius_range, gamma):
         uncertainty_radii = uncertainty_radius_range
         # Initialize the list of sensitivity weights
         self.sensitivity_weights = []
@@ -84,7 +84,7 @@ class PyRPO:
                 {"type": "ineq", "fun": lambda w: w},
                 {"type": "ineq", "fun": lambda w: uncertainty_constraint(w, radius)},
             )
-            objective = lambda w: w.T @ self.covariance_matrix @ w
+            objective = lambda w: w @ self.expected_returns + radius * np.sqrt(w @ np.diag(np.diag(self.covariance_matrix)) @ w) - gamma * (w.T @ self.covariance_matrix @ w)
             result = minimize(objective, self.optimal_weights, constraints=constraints)
 
             # Check if the optimization problem is solvable
