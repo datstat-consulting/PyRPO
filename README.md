@@ -1,6 +1,6 @@
 # PyRPO
 
-Markowitz Mean-Variance Optimization is highly sensitive to small estimation errors in parameters. This problem makes the method unsuable in practice. To counteract these problems, portfolio optimization can factor in uncertainty when estimating parameters. The objective function becomes 
+Markowitz Mean-Variance Optimization is highly sensitive to small estimation errors in parameters. This problem makes the method unsuable in practice. To counteract these problems, portfolio optimization can factor in uncertainty when estimating parameters. The optimization problem becomes 
 
 $$
 \begin{align}
