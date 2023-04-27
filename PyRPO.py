@@ -30,9 +30,9 @@ class PyRPO:
         self.equally_weighted_cumulative_returns = None
 
     def objective_function(self, weights, gamma, uncertainty_radius):
-        portfolio_risk = weights.T @ self.covariance_matrix @ weights
-        expected_portfolio_returns = np.dot(weights.T, self.expected_returns)
-        return expected_portfolio_returns + uncertainty_radius * np.sqrt(weights.T @ np.diag(np.diag(self.covariance_matrix)) @ weights) - gamma*portfolio_risk
+        portfolio_risk = weights @ self.covariance_matrix @ weights
+        expected_portfolio_returns = np.dot(weights, self.expected_returns)
+        return expected_portfolio_returns + uncertainty_radius * np.sqrt(weights @ np.diag(np.diag(self.covariance_matrix)) @ weights) - gamma*portfolio_risk
 
     def constraints_sum_to_one(self, weights):
         return np.sum(weights) - 1
