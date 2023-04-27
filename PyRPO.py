@@ -30,16 +30,15 @@ class PyRPO:
         self.equally_weighted_cumulative_returns = None
 
     def objective_function(self, weights, gamma, uncertainty_radius):
-        portfolio_risk = np.dot(self.expected_returns.T, weights)
-        expected_portfolio_returns = np.dot(weights.T, np.dot(self.covariance_matrix, weights))
-        return portfolio_risk + uncertainty_radius * np.linalg.norm(self.covariance_matrix @ weights, 2) - gamma * expected_portfolio_returns
+        portfolio_risk = weights.T @ self.covariance_matrix @ weights
+        return portfolio_risk + gamma * np.sqrt(portfolio_risk) * uncertainty_radius
 
     def constraints_sum_to_one(self, weights):
         return np.sum(weights) - 1
 
     def uncertainty_estimate(self, risk_free_rate):
         # Calculate daily excess returns
-        excess_returns = self.returns - risk_free_rate / 252
+        excess_returns = self.returns - risk_free_rate/252
 
         # Calculate the Sharpe ratio for each asset
         sharpe_ratios = excess_returns.mean() / excess_returns.std()
