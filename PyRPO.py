@@ -37,9 +37,9 @@ class PyRPO:
     def constraints_sum_to_one(self, weights):
         return np.sum(weights) - 1
 
-    def uncertainty_estimate(self, risk_free_rate):
+    def uncertainty_estimate(self, risk_free_rate, time_period = 252):
         # Calculate daily excess returns
-        excess_returns = self.returns - risk_free_rate/252
+        excess_returns = self.returns - risk_free_rate/time_period
 
         # Calculate the Sharpe ratio for each asset
         sharpe_ratios = excess_returns.mean() / excess_returns.std()
@@ -49,11 +49,11 @@ class PyRPO:
 
         return average_sharpe_ratio/2
 
-    def solve_rpo(self, gamma, uncertainty_radius = None, risk_free_rate = 0.02):
+    def solve_rpo(self, gamma, uncertainty_radius = None, risk_free_rate = 0.02, time_period = 252):
         if uncertainty_radius == None:
             # Method taken from
             # Yin, C., Perchet, R., & Soupé, F. (2021). A practical guide to robust portfolio optimization. Quantitative Finance, 21(6), 911-928.
-            uncertainty_radius = self.uncertainty_estimate(risk_free_rate)
+            uncertainty_radius = self.uncertainty_estimate(risk_free_rate, time_period)
 
         num_assets = len(self.expected_returns)
         initial_weights = np.ones(num_assets) / num_assets
