@@ -58,7 +58,7 @@ print("Optimal weights:", optimizer.optimal_weights)
 Perform sensitivity analysis with a range of uncertainty factors.
 ```
 uncertainty_bounds_factor_range = np.linspace(0.9, 1.1, 50)
-instanceRPO.sensitivity_analysis(uncertainty_bounds_factor_range)
+instanceRPO.sensitivity_analysis(uncertainty_bounds_factor_range, gamma)
 ```
 Plot the optimal weights and sensitivity analyses using matplotlib.
 ```
