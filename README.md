@@ -1,6 +1,6 @@
 # PyRPO
 
-Markowitz Mean-Variance Optimization is highly sensitive to small estimation errors in parameters. This problem makes the method unsuable in practice. To counteract these problems, portfolio optimization can factor in uncertainty when estimating parameters.
+Markowitz Mean-Variance Optimization is highly sensitive to small estimation errors in parameters. This problem makes the method unsuable in practice. To counteract these problems, portfolio optimization can factor in uncertainty when estimating parameters. The objective function becomes $
 
 `PyRPO` is a Python package that implements Robust Portfolio Optimization. This library was built as a hobby project. `PyRPO` relies heavily on `numpy` and `scipy` to handle matrix algebra and optimization. 
 
@@ -12,7 +12,7 @@ Obtain cryptocurrency closing prices.
 exchange = ccxt.bitstamp()
 closing_prices = pd.DataFrame()
 
-symbols = ['BTC/USD', 'ETH/USD', 'GALA/USD']
+symbols = ['XRP/USD', 'ETH/USD', 'ADA/USD']
 timeframe = '1d'
 start_date = '2022-12-01T00:00:00Z'
 
@@ -80,4 +80,5 @@ print(instanceRPO.capital_allocation)
 ```
 # References
 * Feng, Y., & Palomar, D. P. (2016). A signal processing perspective on financial engineering. Foundations and Trends® in Signal Processing, 9(1–2), 1-231.
+* Georgantas, A., Doumpos, M., & Zopounidis, C. (2021). Robust optimization approaches for portfolio selection: a comparative analysis. Annals of Operations Research, 1-17.
 * Yin, C., Perchet, R., & Soupé, F. (2021). A practical guide to robust portfolio optimization. Quantitative Finance, 21(6), 911-928.
