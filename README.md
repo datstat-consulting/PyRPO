@@ -4,10 +4,9 @@ Markowitz Mean-Variance Optimization is highly sensitive to small estimation err
 
 $$
 \begin{align}
-\max & \mathbf{w}^{T} \mathbf{\mu} + \delta \sqrt{\mathbf{w}^{T} \mathbf{\Sigma}_{\mu} \mathbf{w}} - \gamma \mathbf{w}^{T} \mathbf{\Sigma} \mathbf{w}
-\end{align}
-
+\max & \mathbf{w}^{T} \mathbf{\mu} + \delta \sqrt{\mathbf{w}^{T} \mathbf{\Sigma}_{\mu} \mathbf{w}} - \gamma \mathbf{w}^{T} \mathbf{\Sigma} \mathbf{w}\\
 \text{s.t.} & \mathbf{w}^{T}\mathbf{1} = 1
+\end{align}
 $$
 
 where $\mathbf{mu}$ is a vector of expected returns, $\mathbf{w}$ are the asset proportions/weights, $\delta$ is the uncertainty radius, $\mathbf{\Sigma}$, is the variance-covariance matrix of returns, and $\mathbf{\Sigma}_{\mu}$ is a diagonal matrix of returns variances. Note that we are technically trying to maximize _risk-adjusted returns_ since we have a risk aversion term. One may simply set $\gamma = 0$ to ignore risk-adjustment.
