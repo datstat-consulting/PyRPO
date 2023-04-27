@@ -47,11 +47,11 @@ Import the class, and create an instance of the class with a sample CSV file con
 from PyRPO import *
 instanceRPO = PyRPO('PortfolioData.csv')
 ```
-Set the risk aversion parameter (gamma) and solve the RPO problem. When no uncertainty radius is set, PyRPO uses half the average Sharpe Ratios as the Uncertainty Radius as suggested by Yin, Perchet, and Soupé (2021).
+Set the risk aversion parameter (gamma) and solve the RPO problem. When no uncertainty radius is set, PyRPO uses half the average Sharpe Ratios as the Uncertainty Radius as suggested by Yin, Perchet, and Soupé (2021). When no time period is set, PyRPO uses daily returns at 252 working days.
 ```
 gamma = 0.5
 #uncertainty_radius = 0.1
-instanceRPO.solve_rpo(gamma, uncertainty_radius = None, risk_free_rate = 0.02)
+instanceRPO.solve_rpo(gamma, uncertainty_radius = None, risk_free_rate = 0.05, time_period = 360)
 
 print("Optimal weights:", optimizer.optimal_weights)
 ```
@@ -62,14 +62,14 @@ instanceRPO.sensitivity_analysis(uncertainty_bounds_factor_range, gamma)
 ```
 Plot the optimal weights and sensitivity analyses using matplotlib.
 ```
-instanceRPO.plot_optimal_weights(risk_free_rate = 0.02)
+instanceRPO.plot_optimal_weights(risk_free_rate = 0.05, time_period = 360)
 instanceRPO.plot_sensitivity_analysis(uncertainty_bounds_factor_range)
 ```
 Generate the same plots using Plotly.
 ```
 import plotly.io as pio
 
-optimal_weights_figure = instanceRPO.generate_optimal_weights_figure(risk_free_rate = 0.02)
+optimal_weights_figure = instanceRPO.generate_optimal_weights_figure(risk_free_rate = 0.05, time_period = 360)
 pio.show(optimal_weights_figure)
 sensitivity_analysis_figure = instanceRPO.generate_sensitivity_analysis_figure(uncertainty_bounds_factor_range)
 pio.show(sensitivity_analysis_figure)
