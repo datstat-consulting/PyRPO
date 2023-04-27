@@ -4,8 +4,8 @@ Markowitz Mean-Variance Optimization is highly sensitive to small estimation err
 
 $$
 \begin{align}
-\max & \mathbf{w}^{T} \mathbf{\mu} + \delta \sqrt{\mathbf{w}^{T} \mathbf{\Sigma}_{\mu} \mathbf{w}} - \gamma \mathbf{w}^{T} \mathbf{\Sigma} \mathbf{w}\\
-\text{s.t.} & \mathbf{w}^{T}\mathbf{1} = 1
+\max \text{ } & \mathbf{w}^{T} \mathbf{\mu} + \delta \sqrt{\mathbf{w}^{T} \mathbf{\Sigma}_{\mu} \mathbf{w}} - \gamma \mathbf{w}^{T} \mathbf{\Sigma} \mathbf{w}\\
+\text{s.t. } & \mathbf{w}^{T}\mathbf{1} = 1
 \end{align}
 $$
 
