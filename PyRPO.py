@@ -30,14 +30,14 @@ class PyRPO:
         self.equally_weighted_cumulative_returns = None
 
     def objective_function(self, weights, gamma, uncertainty_radius):
-        portfolio_risk = np.dot(weights.T, np.dot(self.covariance_matrix, weights))
-        expected_portfolio_returns = np.dot(self.expected_returns.T, weights)
+        portfolio_risk = np.dot(self.expected_returns.T, weights)
+        expected_portfolio_returns = np.dot(weights.T, np.dot(self.covariance_matrix, weights))
         return portfolio_risk + uncertainty_radius * np.linalg.norm(self.covariance_matrix @ weights, 2) - gamma * expected_portfolio_returns
 
     def constraints_sum_to_one(self, weights):
         return np.sum(weights) - 1
 
-    def uncertainty_estimate(self, risk_free_rate=0.02):
+    def uncertainty_estimate(self, risk_free_rate):
         # Calculate daily excess returns
         excess_returns = self.returns - risk_free_rate / 252
 
@@ -49,11 +49,11 @@ class PyRPO:
 
         return average_sharpe_ratio/2
 
-    def solve_rpo(self, gamma, uncertainty_radius = None):
+    def solve_rpo(self, gamma, uncertainty_radius = None, risk_free_rate = 0.02):
         if uncertainty_radius == None:
             # Method taken from
             # Yin, C., Perchet, R., & Soupé, F. (2021). A practical guide to robust portfolio optimization. Quantitative Finance, 21(6), 911-928.
-            uncertainty_radius = self.uncertainty_estimate()
+            uncertainty_radius = self.uncertainty_estimate(risk_free_rate)
 
         num_assets = len(self.expected_returns)
         initial_weights = np.ones(num_assets) / num_assets
@@ -109,9 +109,9 @@ class PyRPO:
         self.equally_weighted_cumulative_returns = (self.equally_weighted_daily_returns + 1).cumprod()
 
     # Plot the optimal weights using matplotlib
-    def plot_optimal_weights(self, uncertainty_radius = None, x=10, y=6):
+    def plot_optimal_weights(self, risk_free_rate, uncertainty_radius = None, x=10, y=6):
         if uncertainty_radius == None:
-            uncertainty_radius = self.uncertainty_estimate()
+            uncertainty_radius = self.uncertainty_estimate(risk_free_rate)
 
         fig, ax = plt.subplots(figsize=(x, y))
         ax.errorbar(self.expected_returns.index, self.optimal_weights, yerr=[uncertainty_radius] * self.n, fmt='o', capsize=5)
@@ -143,9 +143,9 @@ class PyRPO:
         plt.show()
 
     # Generate the optimal weights figure using Plotly
-    def generate_optimal_weights_figure(self, uncertainty_radius = None):
+    def generate_optimal_weights_figure(self, risk_free_rate, uncertainty_radius = None):
         if uncertainty_radius == None:
-            uncertainty_radius = self.uncertainty_estimate()
+            uncertainty_radius = self.uncertainty_estimate(risk_free_rate)
 
         trace = go.Scatter(
             x=self.expected_returns.index,
