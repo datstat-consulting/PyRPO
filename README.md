@@ -1,8 +1,16 @@
 # PyRPO
 
-Markowitz Mean-Variance Optimization is highly sensitive to small estimation errors in parameters. This problem makes the method unsuable in practice. To counteract these problems, portfolio optimization can factor in uncertainty when estimating parameters. The objective function becomes $
+Markowitz Mean-Variance Optimization is highly sensitive to small estimation errors in parameters. This problem makes the method unsuable in practice. To counteract these problems, portfolio optimization can factor in uncertainty when estimating parameters. The objective function becomes 
+$$
+\begin{align}
+\max & \mathbf{w}^{T} \mathbf{\mu} + \delta \sqrt{\mathbf{w}^{T} \mathbf{\Sigma}_{\mu} \mathbf{w}} - \gamma \mathbf{w}^{T} \mathbf{\Sigma} \mathbf{w}
+\end{align}
+\text{s.t.}
+\mathbf{w}^{T}\mathbf{1} = 1
+$$
+where $\mathbf{mu}$ is a vector of expected returns, $\mathbf{w}$ are the asset proportions/weights, $\delta$ is the uncertainty radius, $\mathbf{\Sigma}$, is the variance-covariance matrix of returns, and $\mathbf{\Sigma}_{\mu}$ is a diagonal matrix of returns variances. Note that we are technically trying to maximize _risk-adjusted returns_ since we have a risk aversion term. One may simply set $\gamma = 0$ to ignore risk-adjustment.
 
-`PyRPO` is a Python package that implements Robust Portfolio Optimization. This library was built as a hobby project. `PyRPO` relies heavily on `numpy` and `scipy` to handle matrix algebra and optimization. 
+`PyRPO` is a Python package that implements Robust Portfolio Optimization. This library was built as a hobby project. `PyRPO` relies heavily on `numpy` and `scipy` to handle matrix algebra and optimization. The uncertainty set used here is ellipsoid.
 
 # Example
 We demonstrate the library using cryptocurrency as an example. This shows how versatile the library is with any kind of Financial asset data.
