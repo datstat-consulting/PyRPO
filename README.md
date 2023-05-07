@@ -13,6 +13,12 @@ where $\mathbf{\mu}$ is a vector of expected returns, $\mathbf{w}$ are the asset
 
 `PyRPO` is a Python package that implements Robust Portfolio Optimization. It uses an ellipsoidal uncertainty set for robust optimization.
 
+## Installation
+You can install the package using pip:
+```
+pip install git+https://github.com/datstat-consulting/PyRPO
+```
+
 # Example
 We demonstrate the library using cryptocurrency as an example. This shows how versatile the library is with any kind of Financial asset data.
 
