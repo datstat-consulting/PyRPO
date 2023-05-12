@@ -58,7 +58,7 @@ Set the risk aversion parameter (gamma) and solve the RPO problem. When no uncer
 ```
 gamma = 0.5
 #uncertainty_radius = 0.1
-instanceRPO.solve_rpo(gamma, uncertainty_radius = None, risk_free_rate = 0.05, time_period = 360)
+instanceRPO.solve_rpo(gamma, train_data = train_data, uncertainty_radius = 1, risk_free_rate = 0.05, time_period = 252)
 
 print("Optimal weights:", instanceRPO.optimal_weights)
 ```
