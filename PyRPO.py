@@ -26,6 +26,22 @@ class PyRPO:
         self.equally_weighted_weights = None
         self.equally_weighted_daily_returns = None
         self.equally_weighted_cumulative_returns = None
+        self.equally_weighted_weights = np.full((self.returns.shape[1], 1), 1 / self.returns.shape[1])
+
+    def train_test_split(self, test_size=0.2):
+        n_samples = len(self.returns)
+        test_samples = int(n_samples * test_size)
+        train_samples = n_samples - test_samples
+
+        train_data = self.returns.iloc[:train_samples]
+        test_data = self.returns.iloc[train_samples:]
+
+        return train_data, test_data
+
+    def sharpe_ratio(self, daily_returns, risk_free_rate=0.02, time_period=252):
+        excess_returns = daily_returns - risk_free_rate / time_period
+        sharpe_ratio = excess_returns.mean() / excess_returns.std() * np.sqrt(time_period)
+        return sharpe_ratio
 
     def objective_function(self, weights, gamma, uncertainty_radius):
         portfolio_risk = weights @ self.covariance_matrix @ weights
@@ -47,7 +63,12 @@ class PyRPO:
 
         return average_sharpe_ratio/2
 
-    def solve_rpo(self, gamma, uncertainty_radius = None, risk_free_rate = 0.02, time_period = 252):
+    def solve_rpo(self, gamma, train_data=None, uncertainty_radius=None, risk_free_rate=0.02, time_period=252):
+        if train_data is not None:
+            self.returns = train_data
+            self.expected_returns = self.returns.mean()
+            self.covariance_matrix = self.returns.cov()
+
         if uncertainty_radius == None:
             # Method taken from
             # Yin, C., Perchet, R., & Soupé, F. (2021). A practical guide to robust portfolio optimization. Quantitative Finance, 21(6), 911-928.
@@ -92,24 +113,26 @@ class PyRPO:
             self.sensitivity_weights.append(result.x)
 
     # Run backtesting
-    def backtesting(self):
-        # Calculate the daily returns of the optimal portfolio
-        self.optimal_portfolio_daily_returns = self.returns.dot(self.optimal_weights)
+    def backtesting(self, test_data):
+        test_returns = test_data.pct_change().dropna()
 
-        # Calculate the cumulative returns of the optimal portfolio
-        self.optimal_portfolio_cumulative_returns = (self.optimal_portfolio_daily_returns + 1).cumprod()
+        if len(self.optimal_weights) != test_returns.shape[1]:
+            raise ValueError("The number of assets in the test dataset does not match the number of assets in the optimal_weights")
 
-        # Calculate the equally-weighted portfolio daily returns
-        self.equally_weighted_weights = np.repeat(1 / self.n, self.n)
-        self.equally_weighted_daily_returns = self.returns.dot(self.equally_weighted_weights)
+        # Calculate the daily returns of the optimal portfolio on test_data
+        test_daily_returns = test_returns.dot(self.optimal_weights)
+        test_cumulative_returns = (test_daily_returns + 1).cumprod()
 
-        # Calculate the cumulative returns of the equally-weighted portfolio
-        self.equally_weighted_cumulative_returns = (self.equally_weighted_daily_returns + 1).cumprod()
+        # Calculate the equally-weighted portfolio daily returns on test_data
+        equally_weighted_daily_returns = test_returns.dot(self.equally_weighted_weights)
+        equally_weighted_cumulative_returns = (equally_weighted_daily_returns + 1).cumprod()
+
+        return test_daily_returns, test_cumulative_returns, equally_weighted_daily_returns, equally_weighted_cumulative_returns
 
     # Plot the optimal weights using matplotlib
-    def plot_optimal_weights(self, risk_free_rate, uncertainty_radius = None, x=10, y=6):
+    def plot_optimal_weights(self, risk_free_rate, time_period = 252, uncertainty_radius = None, x=10, y=6):
         if uncertainty_radius == None:
-            uncertainty_radius = self.uncertainty_estimate(risk_free_rate)
+            uncertainty_radius = self.uncertainty_estimate(risk_free_rate, time_period)
 
         fig, ax = plt.subplots(figsize=(x, y))
         ax.errorbar(self.expected_returns.index, self.optimal_weights, yerr=[uncertainty_radius] * self.n, fmt='o', capsize=5)
@@ -119,10 +142,10 @@ class PyRPO:
         plt.show()
 
     # Plot the backtesting results using matplotlib
-    def plot_backtesting(self, x = 10, y = 6):
+    def plot_backtesting(self, test_cumulative_returns, equally_weighted_cumulative_returns, x=10, y=6):
         plt.figure(figsize=(x, y))
-        plt.plot(self.optimal_portfolio_cumulative_returns, label='Optimal Portfolio')
-        plt.plot(self.equally_weighted_cumulative_returns, label='Equally-Weighted Portfolio')
+        plt.plot(test_cumulative_returns, label='Optimal Portfolio')
+        plt.plot(equally_weighted_cumulative_returns, label='Equally-Weighted Portfolio')
         plt.xlabel('Date')
         plt.ylabel('Cumulative Returns')
         plt.title('Backtesting')
@@ -141,7 +164,7 @@ class PyRPO:
         plt.show()
 
     # Generate the optimal weights figure using Plotly
-    def generate_optimal_weights_figure(self, risk_free_rate, uncertainty_radius = None):
+    def generate_optimal_weights_figure(self, risk_free_rate, time_period = 252, uncertainty_radius = None):
         if uncertainty_radius == None:
             uncertainty_radius = self.uncertainty_estimate(risk_free_rate)
 
@@ -163,10 +186,11 @@ class PyRPO:
         return go.Figure(data=[trace], layout=layout)
 
     # Generate the backtesting figure using Plotly
-    def generate_backtesting_figure(self):
+    def generate_backtesting_figure(self, test_cumulative_returns, equally_weighted_cumulative_returns):
+        equally_weighted_cumulative_returns_series = equally_weighted_cumulative_returns.iloc[:, 0]
         figure = go.Figure()
-        figure.add_trace(go.Scatter(x=self.returns.index, y=self.optimal_portfolio_cumulative_returns, mode='lines', name='Optimal Portfolio'))
-        figure.add_trace(go.Scatter(x=self.returns.index, y=self.equally_weighted_cumulative_returns, mode='lines', name='Equally-Weighted Portfolio'))
+        figure.add_trace(go.Scatter(x=test_cumulative_returns.index, y=test_cumulative_returns, mode='lines', name='Optimal Portfolio'))
+        figure.add_trace(go.Scatter(x=equally_weighted_cumulative_returns_series.index, y=equally_weighted_cumulative_returns_series, mode='lines', name='Equally-Weighted Portfolio'))
         return figure
 
     # Generate the sensitivity analysis figure using Plotly
