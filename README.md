@@ -50,62 +50,47 @@ closing_prices.to_csv('PortfolioData.csv')
 ```
 Import the class, and create an instance of the class with a sample CSV file containing historical price data.
 ```
-from PyRPO import *
-instanceRPO = PyRPO('PortfolioData.csv')
-train_data, test_data = instanceRPO.train_test_split()
-```
-Set the risk aversion parameter (gamma) and solve the RPO problem. When no uncertainty radius is set, PyRPO uses half the average Sharpe Ratios as the Uncertainty Radius as suggested by Yin, Perchet, and Soupé (2021). When no time period is set, PyRPO uses daily returns at 252 working days.
-```
-gamma = 0.5
-#uncertainty_radius = 0.1
-instanceRPO.solve_rpo(gamma, train_data = train_data, uncertainty_radius = 1, risk_free_rate = 0.05, time_period = 252)
+from PyRPO import PyRPO
+import numpy as np
+import pandas as pd
 
-print("Optimal weights:", instanceRPO.optimal_weights)
+rpo = PyRPO('PortfolioData.csv')
+train_data, test_data = rpo.train_test_split(test_size=0.2)
 ```
-Perform sensitivity analysis with a range of uncertainty factors.
+Set the risk aversion parameter (gamma) and solve the RPO problem.
 ```
-uncertainty_bounds_factor_range = np.linspace(0.9, 1.1, 50)
-instanceRPO.sensitivity_analysis(uncertainty_bounds_factor_range, gamma)
-```
-Plot the optimal weights and sensitivity analyses using matplotlib.
-```
-instanceRPO.plot_optimal_weights(risk_free_rate = 0.05, time_period = 360)
-instanceRPO.plot_sensitivity_analysis(uncertainty_bounds_factor_range)
-```
-Generate the same plots using Plotly.
-```
-import plotly.io as pio
+# Choose ONE of these:
 
-optimal_weights_figure = instanceRPO.generate_optimal_weights_figure(risk_free_rate = 0.05, time_period = 360)
-pio.show(optimal_weights_figure)
-sensitivity_analysis_figure = instanceRPO.generate_sensitivity_analysis_figure(uncertainty_bounds_factor_range)
-pio.show(sensitivity_analysis_figure)
-```
-Perform backtesting.
-```
-# Evaluate the performance on the testing dataset
-test_daily_returns = test_data.dot(instanceRPO.optimal_weights)
-sharpe_ratio = instanceRPO.sharpe_ratio(test_daily_returns)
+# A) Robust mean–variance (ellipsoidal mean uncertainty)
+w_star = rpo.solve_robust_mean_variance(
+    gamma=0.5,         # risk aversion on variance
+    rho=0.4,           # robustness strength (penalty)
+    robust_type="ellipsoidal"  # or "box"
+)
+print("Optimal weights (RMV):", w_star)
 
-print("Sharpe Ratio:", sharpe_ratio)
-
-test_daily_returns, test_cumulative_returns, equally_weighted_daily_returns, equally_weighted_cumulative_returns = instanceRPO.backtesting(test_data=test_data)
-
-print("Test Cumulative Returns (Optimal Portfolio):", test_cumulative_returns)
-print("Test Cumulative Returns (Equally-Weighted Portfolio):", equally_weighted_cumulative_returns)
+# OR B) Robust Sharpe ratio (box mean uncertainty)
+# w_star = rpo.solve_robust_sharpe(
+#     risk_free_rate=0.05,
+#     rho=0.5,
+#     robust_type="box"         # or "ellipsoidal"
+# )
+# print("Optimal weights (Robust Sharpe):", w_star)
 ```
-Plot backtesting results.
+Backtest.
 ```
-instanceRPO.plot_backtesting(test_cumulative_returns, equally_weighted_cumulative_returns)
-
-backtesting_figure = instanceRPO.generate_backtesting_figure(test_cumulative_returns, equally_weighted_cumulative_returns)
-backtesting_figure.show()
+pd_port, pc_port, pd_eq, pc_eq = rpo.backtest(test_returns=test_data)  # test_data are returns (already handled)
+print("OOS Sharpe (robust):", rpo.sharpe_ratio(pd_port))
+print("OOS Sharpe (equal) :", rpo.sharpe_ratio(pd_eq))
+```
+Plot the optimal weights and sensitivity analyses.
+```
+rpo.plot_weights()
+rpo.plot_backtest()
 ```
 Allocate capital.
 ```
-instanceRPO.allocate_capital(54368)
-instanceRPO.generate_capital_allocation_chart()
-print(instanceRPO.capital_allocation)
+rpo.plot_capital_allocation(initial_capital=54368)
 ```
 # References
 * Feng, Y., & Palomar, D. P. (2016). A signal processing perspective on financial engineering. Foundations and Trends® in Signal Processing, 9(1–2), 1-231.
